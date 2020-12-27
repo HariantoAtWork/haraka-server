@@ -1,0 +1,5 @@
+To: root@sylo.space
+Subject: sendmail test two
+From: hariantoatwork@gmail.com
+
+And here goes the e-mail body, test test test..

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ ! "$(ls -A $OUTBOUND)" ]; then
+    haraka -i $OUTBOUND
+    cd $OUTBOUND
+    npm i
+fi
+if [ ! "$(ls -A $OUTBOUND/plugins)" ]; then
+    tar -C /usr/local/lib/node_modules/Haraka/plugins/ -czpf - . | tar -vxzpf - -C $OUTBOUND/plugins/
+fi
+haraka -c $OUTBOUND

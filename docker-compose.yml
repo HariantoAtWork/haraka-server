@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  haraka:
+    build:
+      context: ./dockerfiles
+      dockerfile: haraka-alpine.Dockerfile
+    restart: unless-stopped
+    ports:
+      - '25:25'
+      - '587:587'
+    volumes_from:
+      - data
+
+  data:
+    image: node:10-alpine
+    volumes:
+      - ./haraka:/app/outbound
+      - ./tmp:/tmp
+
+# create network: docker network create xnmp-network
+networks:
+  default:
+    external:
+      name: xnmp-network
