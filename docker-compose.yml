@@ -8,14 +8,36 @@ services:
     restart: unless-stopped
     ports:
       - '25:25'
+      - '465:465'
       - '587:587'
+    volumes:
+      - ./haraka:/app/outbound
+      - ./mail:/var/mail
     volumes_from:
       - data
+
+  # haraka-db:
+  #   image: couchdb:3
+  #   environment:
+  #     COUCHDB_USER: admin
+  #     COUCHDB_PASSWORD: admin
+  #   # ports:
+  #   #   - '5984:5984'
+  #   volumes:
+  #     - ./haraka-db:/opt/couchdb/data
+
+  # haraka-db:
+  #   image: rethinkdb:2.4
+  #   volumes:
+  #     - ./haraka-db:/data
+  #   # ports:
+  #   #   - 28015
+  #   #   - 29015
+  #   #   - 8080
 
   data:
     image: node:10-alpine
     volumes:
-      - ./haraka:/app/outbound
       - ./tmp:/tmp
 
 # create network: docker network create xnmp-network
