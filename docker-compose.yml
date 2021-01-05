@@ -22,8 +22,8 @@ services:
     volumes_from:
       - data
 
-  dovercot:
-    image: dovecot/dovecot:2.3.13
+  dovecot:
+    build: build/dovecot
     restart: unless-stopped
     volumes:
       - ./data/mail:/var/mail
@@ -45,11 +45,7 @@ services:
   postgres:
     build: build/postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: mail
-      USER_NAME: mail
-      USER_PASSWD: M@1lmail
+    env_file: docker-compose.env
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
@@ -82,6 +78,7 @@ services:
 
   data:
     image: node:10-alpine
+    command: echo "Done."
     volumes:
       - ./data/tmp:/tmp
 

@@ -9,7 +9,7 @@ CA_KEY="private/ca.key"
 KEYS=("imap.$DOMAIN.key" "smtp.$DOMAIN.key")
 CRTS=("imap.$DOMAIN.crt" "smtp.$DOMAIN.crt")
 REQS=("imap.$DOMAIN.csr" "smtp.$DOMAIN.csr")
-CNFS=("/dovecot-openssl.cnf" "/harkaka-openssl.cnf")
+CNFS=("/dovecot-openssl.cnf" "/haraka-openssl.cnf")
 DHPF="/etc/ssl/dhparams.pem"
 
 # Prepare directories
