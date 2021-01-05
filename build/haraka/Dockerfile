@@ -15,9 +15,9 @@ RUN apk add --no-cache --update --virtual .gyp python make g++ \
 RUN haraka -i $OUTBOUND
 RUN cd $OUTBOUND && node -v > .nvmrc && npm install
 
-ADD src/haraka-serve $APP/
+ADD docker-entrypoint $APP/
 ENV WORKDIR=$OUTBOUND
 EXPOSE 25
 EXPOSE 587
 
-ENTRYPOINT .$APP/haraka-serve
+ENTRYPOINT .$APP/docker-entrypoint

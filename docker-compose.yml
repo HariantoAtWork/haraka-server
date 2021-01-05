@@ -1,20 +1,65 @@
 version: '2'
 
 services:
+  certs:
+    build: build/certs
+    environment:
+      DOMAIN: sylo.space
+    volumes:
+      - ./data/ssl:/etc/ssl
+
   haraka:
-    build:
-      context: ./dockerfiles
-      dockerfile: haraka-alpine.Dockerfile
+    build: build/haraka
     restart: unless-stopped
     ports:
       - '25:25'
       - '465:465'
       - '587:587'
     volumes:
-      - ./haraka:/app/outbound
-      - ./mail:/var/mail
+      - ./data/haraka:/app/outbound
+      - ./data/mail:/var/mail
+      - ./data/ssl:/etc/ssl:ro
     volumes_from:
       - data
+
+  dovercot:
+    image: dovecot/dovecot:2.3.13
+    restart: unless-stopped
+    volumes:
+      - ./data/mail:/var/mail
+      - ./data/ssl:/etc/ssl:ro
+    ports:
+    # POP3
+     - '110:110'
+     - '995:995'
+    # IMAP
+     - '143:143'
+     - '993:993'
+    # SMTP SSL: Submission
+    #  - '587:587'
+    # LMTP
+     - '24:24'
+    # ManageSieve
+     - '4190:4190'
+
+  postgres:
+    build: build/postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: mail
+      USER_NAME: mail
+      USER_PASSWD: M@1lmail
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  postgres-admin:
+    image: adminer
+    restart: unless-stopped
+    # ports:
+    #  - '8080:8080'
+
+
 
   # haraka-db:
   #   image: couchdb:3
@@ -38,7 +83,7 @@ services:
   data:
     image: node:10-alpine
     volumes:
-      - ./tmp:/tmp
+      - ./data/tmp:/tmp
 
 # create network: docker network create xnmp-network
 networks:
