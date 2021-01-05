@@ -1,6 +1,16 @@
-driver = pgsql
-connect = host=postgres dbname=ndb user=usrname password=passwd
-default_pass_scheme = MD5-CRYPT
-password_query = SELECT username, domain, password FROM mailbox WHERE username = '%u' AND active = 't'
-# Enable quota (optional)
-user_query = SELECT maildir, 8 AS uid, 8 AS gid, 'dict:storage=' || floor(quota/1000) || '::proxy::quota' as quota FROM mailbox WHERE username = '%u' AND active='t'
+driver = mysql
+# The mysqld.sock socket may be in different locations in different systems.
+# Use "host= ... pass=foo#bar" with double-quotes if your password has '#' character.
+# If you need SSL connection, you can add ssl_ca or ssl_ca_path
+# You can also use ssl_cert/ssl_key, ssl_cipher, ssl_verify_server_cert
+# or provide option_file and option_group
+connect = host=DOVECOT_DB_HOST dbname=DOVECOT_DB_NAME user=DOVECOT_DB_USER password=DOVECOT_DB_PASSWORD
+# Alternatively you can connect to localhost as well:
+#connect = host=localhost dbname=mails user=admin password=pass # port=3306
+
+password_query = SELECT userid AS username, domain, password \
+FROM users WHERE userid = '%n' AND domain = '%d'
+user_query = SELECT home, uid, gid FROM users WHERE userid = '%n' AND domain = '%d'
+
+# For using doveadm -A:
+iterate_query = SELECT userid AS username, domain FROM users

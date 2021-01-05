@@ -17,26 +17,34 @@ services:
     volumes:
       - ./data/haraka:/app/outbound
       - ./data/mail:/var/mail
-      - ./data/ssl:/etc/ssl:ro
     volumes_from:
       - data
 
-  postgres:
-    build: build/postgres
+  mariadb:
+    image: mariadb
     restart: unless-stopped
     env_file: docker-compose.env
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - ./data/mariadb:/var/lib/mysql
+
+  mariadb-admin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    env_file: docker-compose.env
+    depends_on:
+      - mariadb
+    # ports:
+    #   - "8000:80"
 
   dovecot:
     build: build/dovecot
     restart: unless-stopped
     env_file: docker-compose.env
     links:
-      - postgres
+      - mariadb
     depends_on:
       - certs
-      - postgres
+      - mariadb
     ports:
     # POP3
      - '110:110'
@@ -52,42 +60,48 @@ services:
      - '4190:4190'
     volumes:
       - ./data/mail:/var/mail
-      - ./data/ssl:/etc/ssl:ro
+    volumes_from:
+      - data
 
-
-
-  postgres-admin:
-    image: adminer
-    restart: unless-stopped
-    env_file: docker-compose.env
-    # ports:
-    #  - '8080:8080'
-
-
-
-  # haraka-db:
-  #   image: couchdb:3
-  #   environment:
-  #     COUCHDB_USER: admin
-  #     COUCHDB_PASSWORD: admin
+  # postgres-admin:
+  #   image: adminer
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
   #   # ports:
-  #   #   - '5984:5984'
-  #   volumes:
-  #     - ./haraka-db:/opt/couchdb/data
+  #   #  - '8080:8080'
 
-  # haraka-db:
-  #   image: rethinkdb:2.4
-  #   volumes:
-  #     - ./haraka-db:/data
+  # roundcube:
+  #   image: roundcube/roundcubemail:1.4.x-apache
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
   #   # ports:
-  #   #   - 28015
-  #   #   - 29015
-  #   #   - 8080
+  #   #   - "80:80"
+  #   links:
+  #     - postgres
+  #   depends_on:
+  #     - certs
+  #     - postgres
+  #   volumes_from:
+  #     - data
+
+  # mailadmin:
+  #   build: build/postfixadmin
+  #   # image: postfixadmin:3
+  #   restart: unless-stopped
+  #   env_file: docker-compose.env
+  #   links:
+  #     - postgres
+  #   depends_on:
+  #     - certs
+  #     - postgres
+  #   # ports:
+  #   #   - "80:80"
 
   data:
     image: node:10-alpine
     command: echo "Done."
     volumes:
+      - ./data/ssl:/etc/ssl:ro
       - ./data/tmp:/tmp
 
 # create network: docker network create xnmp-network
