@@ -3,8 +3,7 @@ version: '2'
 services:
   certs:
     build: build/certs
-    environment:
-      DOMAIN: sylo.space
+    env_file: docker-compose.env
     volumes:
       - ./data/ssl:/etc/ssl
 
@@ -22,12 +21,22 @@ services:
     volumes_from:
       - data
 
+  postgres:
+    build: build/postgres
+    restart: unless-stopped
+    env_file: docker-compose.env
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
   dovecot:
     build: build/dovecot
     restart: unless-stopped
-    volumes:
-      - ./data/mail:/var/mail
-      - ./data/ssl:/etc/ssl:ro
+    env_file: docker-compose.env
+    links:
+      - postgres
+    depends_on:
+      - certs
+      - postgres
     ports:
     # POP3
      - '110:110'
@@ -41,17 +50,16 @@ services:
      - '24:24'
     # ManageSieve
      - '4190:4190'
-
-  postgres:
-    build: build/postgres
-    restart: unless-stopped
-    env_file: docker-compose.env
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - ./data/mail:/var/mail
+      - ./data/ssl:/etc/ssl:ro
+
+
 
   postgres-admin:
     image: adminer
     restart: unless-stopped
+    env_file: docker-compose.env
     # ports:
     #  - '8080:8080'
 

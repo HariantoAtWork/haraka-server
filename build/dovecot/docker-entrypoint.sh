@@ -16,7 +16,7 @@ sed -i "s/usrname/$USER_NAME/g" /etc/dovecot/dovecot-*sql.conf.ext
 sed -i "s/passwd/$USER_PASSWD/g" /etc/dovecot/dovecot-*sql.conf.ext
 # Update domain
 sed -i "s/example.com/$DOMAIN/g" /etc/dovecot/conf.d/10-ssl.conf
-sed -i "s/example.com/$DOMAIN/g" /etc/dovecot/local.conf
+sed -i "s/example.com/$DOMAIN/g" /etc/dovecot/dovecot.conf
 
 # Run dovecot
 exec "$@"
