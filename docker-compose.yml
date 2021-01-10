@@ -1,5 +1,8 @@
 version: '2'
 
+volumes:
+    mysqld:
+    
 services:
   certs:
     build: build/certs
@@ -21,20 +24,44 @@ services:
       - data
 
   mariadb:
-    image: mariadb
+    build: build/mariadb
+    # image: mariadb
     restart: unless-stopped
     env_file: docker-compose.env
+    # environment: 
+    #   MYSQL_ROOT_PASSWORD: 6f56b7e6
     volumes:
       - ./data/mariadb:/var/lib/mysql
+      # - ./mariadb.cnf:/etc/mysql/mariadb.cnf:ro
+      # - mysqld:/var/run/mysqld
 
   mariadb-admin:
     image: phpmyadmin/phpmyadmin
     restart: unless-stopped
     env_file: docker-compose.env
+    links:
+      - mariadb
     depends_on:
       - mariadb
     # ports:
     #   - "8000:80"
+    volumes:
+      - ./data/mariadb-admin:/var/www/html
+
+  mail-admin:
+    build: build/mail-admin
+    # image: postfixadmin:3.2
+    restart: unless-stopped
+    env_file: docker-compose.env
+    links:
+      - mariadb
+    depends_on:
+      - certs
+      - mariadb
+    # ports:
+    #   - "80:80"
+    volumes:
+      - ./data/mail-admin:/var/www/html
 
   dovecot:
     build: build/dovecot
@@ -63,13 +90,6 @@ services:
     volumes_from:
       - data
 
-  # postgres-admin:
-  #   image: adminer
-  #   restart: unless-stopped
-  #   env_file: docker-compose.env
-  #   # ports:
-  #   #  - '8080:8080'
-
   # roundcube:
   #   image: roundcube/roundcubemail:1.4.x-apache
   #   restart: unless-stopped
@@ -84,18 +104,7 @@ services:
   #   volumes_from:
   #     - data
 
-  # mailadmin:
-  #   build: build/postfixadmin
-  #   # image: postfixadmin:3
-  #   restart: unless-stopped
-  #   env_file: docker-compose.env
-  #   links:
-  #     - postgres
-  #   depends_on:
-  #     - certs
-  #     - postgres
-  #   # ports:
-  #   #   - "80:80"
+
 
   data:
     image: node:10-alpine
