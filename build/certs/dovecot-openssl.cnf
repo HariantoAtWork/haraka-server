@@ -7,13 +7,13 @@ prompt = no
 
 [ req_dn ]
 # country (2 letter code)
-C=US
+C=NL
 
 # State or Province Name (full name)
-ST=New York
+ST=Zuid-Holland
 
 # Locality Name (eg. city)
-L=New York
+L=Rijswijk
 
 # Organization (eg. company)
 O=Dovecot
