@@ -5,12 +5,13 @@ volumes:
     
 services:
   certs:
-    build: build/certs
     env_file: docker-compose.env
+    build: build/certs
     volumes:
       - ./data/ssl:/etc/ssl
 
   haraka:
+    env_file: docker-compose.env
     build: build/haraka
     restart: unless-stopped
     ports:
@@ -24,10 +25,10 @@ services:
       - data
 
   mariadb:
+    env_file: docker-compose.env
     build: build/mariadb
     # image: mariadb
     restart: unless-stopped
-    env_file: docker-compose.env
     # environment: 
     #   MYSQL_ROOT_PASSWORD: 6f56b7e6
     volumes:
@@ -36,23 +37,23 @@ services:
       # - mysqld:/var/run/mysqld
 
   mariadb-admin:
+    env_file: docker-compose.env
     image: phpmyadmin/phpmyadmin
     restart: unless-stopped
-    env_file: docker-compose.env
     links:
       - mariadb
     depends_on:
       - mariadb
     # ports:
     #   - "8000:80"
-    volumes:
-      - ./data/mariadb-admin:/var/www/html
+    # volumes:
+    #   - ./data/mariadb-admin:/var/www/html
 
   mail-admin:
+    env_file: docker-compose.env
     build: build/mail-admin
     # image: postfixadmin:3.2
     restart: unless-stopped
-    env_file: docker-compose.env
     links:
       - mariadb
     depends_on:
@@ -61,12 +62,13 @@ services:
     # ports:
     #   - "80:80"
     volumes:
+      # - ./build/mail-admin/config.local.php:/var/www/html/config.local.php:ro
       - ./data/mail-admin:/var/www/html
 
   dovecot:
+    env_file: docker-compose.env
     build: build/dovecot
     restart: unless-stopped
-    env_file: docker-compose.env
     links:
       - mariadb
     depends_on:

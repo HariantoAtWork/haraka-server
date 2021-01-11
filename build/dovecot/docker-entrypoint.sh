@@ -7,6 +7,7 @@ done
 
 while [ ! -f /etc/ssl/certs/imap.$DOVECOT_DOMAIN.crt ]
 do
+  echo "Check if exist: /etc/ssl/certs/imap.$DOVECOT_DOMAIN.crt"
   sleep 1
 done
 

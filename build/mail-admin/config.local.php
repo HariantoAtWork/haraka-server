@@ -21,4 +21,4 @@
 		}
 
 		# DOVECOT CONFIG
-		$CONF['encrypt'] = 'dovecot:CRAM-MD5';
+		$CONF['encrypt'] = getenv('POSTFIXADMIN_ENCRYPT');

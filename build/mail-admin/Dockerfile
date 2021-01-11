@@ -1,18 +1,13 @@
 FROM postfixadmin:3.2
 
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends mariadb-client netcat
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -q -y --no-install-recommends mariadb-client netcat dovecot-core
 
-COPY config.inc.php /var/www/html/config.inc.php
-COPY config.local.php /var/www/html/config.local.php
-COPY config.inc.php /etc/postfixadmin/config.inc.php
-COPY config.local.php /etc/postfixadmin/config.local.php
+# Clean up
+RUN apt-get clean; rm -r /var/lib/apt/lists/*
 
-# Copy sample database dump
-#COPY mail.sql.gz /var/backups/
+COPY docker-entrypoint.sh /
 
-# COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
-# ENTRYPOINT ["/docker-entrypoint.sh"]
-
-# CMD [ "/usr/sbin/apache2", "-DFOREGROUND" ]
+CMD ["apache2-foreground"]

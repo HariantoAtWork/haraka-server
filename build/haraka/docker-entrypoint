@@ -1,5 +1,11 @@
 #!/bin/sh
 
+while [ ! -f /etc/ssl/certs/smtp.$HARAKA_DOMAIN.crt ]
+do
+  echo "Check if exist: /etc/ssl/certs/smtp.$HARAKA_DOMAIN.crt"
+  sleep 1
+done
+
 if [ ! "$(ls -A $OUTBOUND)" ]; then
     haraka -i $OUTBOUND
     cd $OUTBOUND
